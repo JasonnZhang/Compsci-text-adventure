@@ -1,0 +1,24 @@
+import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.ImageIcon;
+
+/**
+ * Write a description of class GUIComponent here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class BackgroundComponent extends JComponent
+{
+    ImageIcon img;
+    public BackgroundComponent()
+    {
+        setSize(680, 690);
+        img = new ImageIcon("map.png");
+    }
+    
+    public void paint(Graphics g)
+    {
+        g.drawImage(img.getImage(),0,0,null);
+    }
+}
