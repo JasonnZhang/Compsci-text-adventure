@@ -1,0 +1,86 @@
+/**
+ * Write a description of class Dor here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+
+import java.util.ArrayList;
+
+public class Vase extends MapElement
+{
+    private ArrayList<MapElement> inVase = new ArrayList<MapElement>();
+    
+    public Vase(Material type, String name) {
+        super(type,false,false,name);
+        
+        String[] tempActionList = {"break", "search"};
+        setActionList(tempActionList);
+    }
+    
+    public Vase() {
+        super(new Material("unbreakable"),false,false,"vase");
+        
+        String[] tempActionList = {"break", "search"};
+        setActionList(tempActionList);
+    }
+    
+    public void use(String action) {
+        int index = actionIndexOf(action);
+        switch(index) {
+            case -1:
+                // should there be something here?
+                break;
+            case 0:
+                smash();
+                break;
+            case 1:
+                search();
+        }
+    }   
+    
+    public void use(String action, MapElement tool) {
+        int index = actionIndexOf(action);
+        switch(index) {
+            case -1:
+                // should there be something here?
+                break;
+            case 0:
+                smash(tool);
+                break;
+        }
+    }    
+    
+    public void smash() {
+        if (getType().getStrength() < 10) {
+            destroy();
+            System.out.println("You smash the vase with your fists.");
+        }
+    }
+    
+    public void smash(MapElement item) {
+        if (getType().getStrength() < item.getType().getStrength()) {
+            destroy();
+            System.out.println("You smash the vase with " + item + ".");
+        }
+        else {
+            System.out.println("you try to smash the vase with " + item + ", but it won't break.");
+        }
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public String toString() {
+        return super.toString();
+    }
+    
+    public String search() {
+        String rString = super.toString() + "\n Items in vase: ";
+        for (int i = 0; i < inVase.size(); i++) {
+            rString += inVase.get(i) + ", ";
+        }
+        return rString.substring(rString.length()-2);
+    }
+}

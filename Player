@@ -64,6 +64,23 @@ public class Player
             position = input.indexOf(' ', position+1);
             return pickUp(input.substring(position+1));
         }
+
+        if (input.indexOf("step on") > -1) {
+            if (room1.mapArray[y][x].findElement("pressure plate") != null) {
+                return pickUp(input.substring(position+1));
+            }
+        }
+        
+        if (input.indexOf("step off") > -1) {
+            position = input.indexOf(' ', position+1);
+            return pickUp(input.substring(position+1));
+        }
+        
+        if (input.indexOf("place on") > -1) {
+            position = input.indexOf(' ', position+1);
+            return pickUp(input.substring(position+1));
+        }
+        
         
         String actionString = input.substring(0,position);
         String objectString = input.substring(position+1);
@@ -135,6 +152,17 @@ public class Player
         return false;
     }
     
+    public static boolean drop(String objectName) {
+        MapElement object = Player.inventory.findItem(objectName);
+        if (object != null) {
+            room1.mapArray[y][x].add(object);
+            inventory.remove(object);
+            System.out.println("You drop the " + object.getName() + ". ");
+            return true;
+        }
+        return false;
+    }
+                
     public static boolean move(String direction) {
         boolean haveMoved = false;
         if (direction.compareTo("north")== 0 || direction.compareTo("up")== 0) {

@@ -1,0 +1,119 @@
+/**
+ * Write a description of class Dor here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+
+import java.util.ArrayList;
+
+public class PressurePlate extends MapElement
+{
+    private boolean activated;
+    private ArrayList<MapElement> onPlate = new ArrayList<MapElement>();
+
+    public PressurePlate(Material type, String name) {
+        super(type,false,false,name);
+
+        String[] tempActionList = {"step on", "step off", "place on", "take off"};
+        setActionList(tempActionList);
+    }
+
+    public PressurePlate() {
+        super(new Material("unbreakable"),false,false,"pressure plate");
+
+        String[] tempActionList = {"step on", "step off", "place on", "take off"};
+        setActionList(tempActionList);
+    }
+
+    public void use(String action) {
+        int index = actionIndexOf(action);
+        switch(index) {
+            case -1:
+                // should there be something here?
+                break;
+            case 0:
+                stepOn();
+                break;
+            case 1:
+                stepOff();
+                break;
+            case 2:
+                takeOff();
+                break;
+        }
+    }   
+
+    public void use(String action, MapElement tool) {
+        int index = actionIndexOf(action);
+        switch(index) {
+            case -1:
+                // should there be something here?
+                break;
+            case 0:
+                placeOn(tool);
+                break;
+        }
+    }    
+
+    public void stepOn() {
+        if (activated == false) {
+            activated = true;
+            System.out.println("You step on the pressure plate.");
+        }
+        else {
+            System.out.println("The pressure plate is already activated.");
+        }
+    }
+
+    public void stepOff() {
+        activated = false;
+        System.out.println("You step off the pressure plate.");
+    }
+
+    public void placeOn(MapElement tool) {
+        if (tool.getClass() == Vase.class) {
+            if (onPlate.size() == 0) {
+                activated = true;
+                System.out.println("You place the vase on the pressure plate.");
+                onPlate.add(tool);
+                Player.inventory.remove(tool);
+            }
+            else {
+                System.out.println("There is already a vase on the pressure plate.");
+            }
+        }
+        else {
+            System.out.println("That item is not heavy enough to activate the pressure plate.");
+        }
+    }
+
+    public void takeOff() {
+        if (onPlate.size() == 1) {
+            activated = false;
+            System.out.println("You take the vase off of the pressure plate.");
+            Player.inventory.add(onPlate.get(0));
+            onPlate.remove(0);
+        }
+        else {
+            System.out.println("There is nothing on the pressure plate to take.");
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String toString() {
+        if (onPlate.size() == 0) {
+            return super.toString();
+        }
+        else {
+            return super.toString() + "\n Item on pressure plate: " + onPlate.get(0);
+        }
+    }
+    
+    public boolean checkActivated() {
+        return activated;
+    }
+}
