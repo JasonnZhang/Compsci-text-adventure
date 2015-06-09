@@ -1,15 +1,8 @@
-/**
- * Write a description of class Input here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
-
 import java.util.Scanner;
 
 public class Player
 {
-    public static int x = 0, y = 0;
+    public static int x = 2, y = 0;
     public static Map room1;
     public static Inventory inventory;
     public static String[] directions = {"north", "east", "south", "west"};
@@ -19,13 +12,18 @@ public class Player
         room1 = new Map();
         Scanner kb = new Scanner(System.in);
         String input;
-        do{
+        System.out.println("You wake up in a dungeon. You see a sticky note on the wall. \n" + 
+                           "It reads: \"The metal doors will only open when all the \n" + 
+                           "  pressure plates are activated. You need something heavy \n" + 
+                           "  to activate them. Enjoy my maze!\"\n" + 
+                           "Type \"help\" for available commands.");
+        while (true) {
             System.out.print(">");
             input = kb.nextLine().toLowerCase();    
             if (!processText(input)) {
                 System.out.println("Sorry, you can't " + input + ".\n");
             }
-        } while (input.compareTo("quit") != 0);
+        } 
     }
     
     public static boolean processText(String input) {
@@ -55,35 +53,18 @@ public class Player
                                    " \"(action) + with + (object)\". Good luck and have fun!");
                 return true;
             }
+            else if (input.compareTo("quit") == 0) {
+                System.exit(0);
+            }
             else {
                 return false;
             }
         }
-        
-        if (input.indexOf("pick up") > -1) {
-            position = input.indexOf(' ', position+1);
-            return pickUp(input.substring(position+1));
-        }
-
-        if (input.indexOf("step on") > -1) {
-            if (room1.mapArray[y][x].findElement("pressure plate") != null) {
-                return pickUp(input.substring(position+1));
-            }
-        }
-        
-        if (input.indexOf("step off") > -1) {
-            position = input.indexOf(' ', position+1);
-            return pickUp(input.substring(position+1));
-        }
-        
-        if (input.indexOf("place on") > -1) {
-            position = input.indexOf(' ', position+1);
-            return pickUp(input.substring(position+1));
-        }
-        
-        
+           
         String actionString = input.substring(0,position);
         String objectString = input.substring(position+1);
+        
+        MapElement object;
         
         // if the action is to move
         if (actionString.compareTo("move") == 0) {
@@ -91,13 +72,55 @@ public class Player
         }
         else if (actionString.compareTo("check") == 0) {
             // check if the object is in 
-            MapElement object = findObject(objectString);
+            object = findObject(objectString);
             if (object!= null) {
                 System.out.println(object);
                 return true;
             }
             return false;
         }
+        else if (actionString.compareTo("drop") == 0) {
+            // check if the object is in 
+            object = inventory.findItem(objectString);
+            if (object!= null) {
+                room1.mapArray[x][y].add(object);
+                inventory.remove(object);
+                System.out.println("You drop the " + object.getName() + ".");
+                return true;
+            }
+            return false;
+        }
+        else if (input.indexOf("pick up") > -1) {
+            position = input.indexOf(' ', position+1);
+            return pickUp(input.substring(position+1));
+        }
+        /* else if (input.indexOf("step on") > -1) {
+            object = room1.mapArray[y][x].findElement("pressure plate");
+            if (object != null) {
+                return object.use("step on");
+            }
+            else {
+                return false;
+            }
+        }
+        else if (input.indexOf("step off") > -1) {
+            object = room1.mapArray[y][x].findElement("pressure plate");
+            if (object != null) {
+                return object.use("step off");
+            }
+            else {
+                return false;
+            }
+        }
+        else if (input.indexOf("place on") > -1) {
+            object = room1.mapArray[y][x].findElement("pressure plate");
+            if (object != null) {
+                return object.use("step off");
+            }
+            else {
+                return false;
+            }
+        } */
         
         position = objectString.indexOf("with");
         // position is now used for finding position of "with"
@@ -116,7 +139,7 @@ public class Player
         }
         
         // for normal actions
-        MapElement object = findObject(objectString);
+        object = findObject(objectString);
         if (object != null) {
             if (hasTool) {
                 return object.use(actionString,tool);
@@ -165,7 +188,7 @@ public class Player
                 
     public static boolean move(String direction) {
         boolean haveMoved = false;
-        if (direction.compareTo("north")== 0 || direction.compareTo("up")== 0) {
+        if (direction.compareTo("north")== 0 ) { // direction.compareTo("up")== 0) {
             if (y>0 && (room1.mapArray[y][x].canPass(0))) {
                 y--;
                 haveMoved = true;
@@ -174,7 +197,7 @@ public class Player
                 haveMoved =  false;
             }
         }
-        else if (direction.compareTo("west")== 0 || direction.compareTo("left")== 0) {
+        else if (direction.compareTo("west")== 0 ) { // direction.compareTo("left")== 0) {
             if (x>0 && (room1.mapArray[y][x].canPass(3))) {
                 x--;
                 haveMoved =  true;
@@ -183,7 +206,7 @@ public class Player
                 haveMoved =  false;
             }
         }
-        else if (direction.compareTo("south")== 0 || direction.compareTo("down")==0) {
+        else if (direction.compareTo("south")== 0 ) { // direction.compareTo("down")==0) {
             if (y<room1.mapArray.length-1 && (room1.mapArray[y][x].canPass(2))) {
                 y++;
                 haveMoved =  true;
@@ -192,7 +215,7 @@ public class Player
                 haveMoved =  false;
             }
         }
-        else if (direction.compareTo("east")== 0 || direction.compareTo("right")== 0) {
+        else if (direction.compareTo("east")== 0 ) { // direction.compareTo("right")== 0) {
             if (x<room1.mapArray[0].length-1 && (room1.mapArray[y][x].canPass(1))) {
                 x++;
                 haveMoved =  true;
